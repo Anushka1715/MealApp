@@ -1,0 +1,276 @@
+<section class="login-content">
+  <div class="login-content-lt"></div>
+  <div class="login-content-rt">
+    <div class="login-box">
+      <form class="login-form" action="#" [formGroup]="signUpForm">
+        <div class="logo-wrapper">
+          <img src="../../../assets/images/logo.svg" alt="Rishabh Software" />
+          <span>Meal Facility</span>
+        </div>
+        <h3 class="login-head">Register yourself</h3>
+        <p class="login-text">Enter your credentials to make your account.</p>
+        <div class="form-group">
+          <label class="control-label">Select your role:</label>
+          <div>
+            <mat-form-field>
+              <mat-select
+                [class.error]="
+                  signUpForm.controls['role'].dirty &&
+                  signUpForm.hasError('required', 'role')
+                "
+                formControlName="role"
+                (selectionChange)="onRoleSelectionChange($event)"
+              >
+                <mat-option *ngFor="let role of roles" [value]="role">
+                  {{ role }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <small
+            *ngIf="
+              signUpForm.get('role')?.invalid && signUpForm.get('role')?.touched
+            "
+            class="text-danger"
+            >*Role selection required</small
+          >
+        </div>
+        <div class="form-group" *ngIf="showEmployeeIdField">
+          <label class="control-label">Employee Id</label>
+          <div class="input-addon">
+            <input
+              [class.error]="
+                signUpForm.controls['empId'].dirty &&
+                signUpForm.hasError('required', 'empId')
+              "
+              formControlName="empId"
+              class="form-control"
+              type="text"
+              placeholder="eg.416"
+              autofocus
+            />
+            <div class="icon-after icon-green"><i class="icon-check"></i></div>
+          </div>
+          <!-- <div class="error-block">Error display here</div> -->
+          <small
+            *ngIf="
+              signUpForm.controls['empId'].dirty &&
+              signUpForm.hasError('required', 'empId')
+            "
+            class="text-danger"
+            >*Employee Id is required</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="control-label">First Name</label>
+          <div class="input-addon">
+            <input
+              [class.error]="
+                signUpForm.controls['firstName'].dirty &&
+                signUpForm.hasError('required', 'firstName')
+              "
+              formControlName="firstName"
+              class="form-control"
+              type="text"
+              placeholder="Robert"
+              autofocus
+            />
+            <div class="icon-after icon-green"><i class="icon-check"></i></div>
+          </div>
+          <!-- <div class="error-block">Error display here</div> -->
+          <small
+            *ngIf="
+              signUpForm.controls['firstName'].dirty &&
+              signUpForm.hasError('required', 'firstName')
+            "
+            class="text-danger"
+            >*First Name is required</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="control-label">Last Name</label>
+          <div class="input-addon">
+            <input
+              [class.error]="
+                signUpForm.controls['lastName'].dirty &&
+                signUpForm.hasError('required', 'lastName')
+              "
+              formControlName="lastName"
+              class="form-control"
+              type="text"
+              placeholder="Smith"
+              autofocus
+            />
+            <div class="icon-after icon-green"><i class="icon-check"></i></div>
+          </div>
+          <!-- <div class="error-block">Error display here</div> -->
+          <small
+            *ngIf="
+              signUpForm.controls['lastName'].dirty &&
+              signUpForm.hasError('required', 'lastName')
+            "
+            class="text-danger"
+            >*Last Name is required</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="control-label">Email</label>
+          <div class="input-addon">
+            <input
+              [class.error]="
+                signUpForm.controls['emailId'].dirty &&
+                signUpForm.hasError('required', 'emailId')
+              "
+              formControlName="emailId"
+              class="form-control"
+              type="email"
+              placeholder="smith123@gmail.com"
+              autofocus
+            />
+            <div class="icon-after icon-green"><i class="icon-check"></i></div>
+          </div>
+          <!-- <div class="error-block">Error display here</div> -->
+          <small
+            *ngIf="
+              signUpForm.controls['emailId'].dirty &&
+              signUpForm.hasError('required', 'emailId')
+            "
+            class="text-danger"
+            >*Email Id is required</small
+          >
+          <small
+            *ngIf="
+              signUpForm.controls['emailId'].dirty &&
+              signUpForm.hasError('email', 'emailId')
+            "
+            class="text-danger"
+            >*Invalid email format</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="control-label">Phone Number</label>
+          <div class="input-addon">
+            <input
+              [class.error]="
+                signUpForm.controls['phoneNumber'].dirty &&
+                signUpForm.hasError('required', 'phoneNumber')
+              "
+              class="form-control"
+              type="text"
+              id="phoneNumber"
+              formControlName="phoneNumber"
+              placeholder="+91 123 456 7890"
+              autofocus
+            />
+            <div class="icon-after icon-green"><i class="icon-check"></i></div>
+          </div>
+          <!-- <div class="error-block">Error display here</div> -->
+          <small
+            *ngIf="
+              signUpForm.controls['phoneNumber'].dirty &&
+              signUpForm.hasError('required', 'phoneNumber')
+            "
+            class="text-danger"
+            >*Phone number is required</small
+          >
+          <small
+            *ngIf="
+              signUpForm.controls['phoneNumber'].dirty &&
+              signUpForm.controls['phoneNumber'].hasError(
+                'invalidPhoneNumber'
+              ) &&
+              !signUpForm.hasError('required', 'phoneNumber')
+            "
+            class="text-danger"
+            >*Invalid phone number format</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="control-label">Password</label>
+          <div class="input-addon">
+            <input
+              [class.error]="
+                signUpForm.controls['password'].dirty &&
+                signUpForm.hasError('required', 'password')
+              "
+              formControlName="password"
+              id="password-field"
+              class="form-control"
+              type="password"
+            />
+            <span
+              toggle="#password-field"
+              class="icon-eye-close field-icon toggle-password"
+            ></span>
+          </div>
+          <small
+            *ngIf="
+              signUpForm.controls['password'].dirty &&
+              signUpForm.hasError('required', 'password')
+            "
+            class="text-danger"
+            >*Password is required</small
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="control-label">Confirm Password</label>
+          <div class="input-addon">
+            <input
+              formControlName="confirmPassword"
+              [class.error]="
+                signUpForm.controls['confirmPassword'].dirty &&
+                signUpForm.hasError('passwordMismatch', 'confirmPassword')
+              "
+              class="form-control"
+              type="password"
+            />
+            <span
+              toggle="#password-field"
+              class="icon-eye-close field-icon toggle-password"
+            ></span>
+          </div>
+          <small
+            *ngIf="
+              signUpForm.controls['confirmPassword'].dirty &&
+              signUpForm.hasError('passwordMismatch')
+            "
+            class="text-danger"
+            >*Passwords do not match</small
+          >
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="form-group mb-0">
+            <label class="custom-checkbox mb-0"
+              ><span class="checkbox__title">Remember Me</span>
+              <input class="checkbox__input" type="checkbox" /><span
+                class="checkbox__checkmark"
+              ></span>
+            </label>
+          </div>
+          <div class="form-group mb-0">
+            <div class="utility">
+              <p><a href="#" class="form-link">Forgot Password?</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group btn-container">
+          <button (click)="onRegisteration()" class="btn btn-danger">
+            Sign Up
+          </button>
+        </div>
+      </form>
+      <div class="form-group btn-container signup">
+        Already Have an account?
+        <a [routerLink]="['/login']">Login</a>
+      </div>
+    </div>
+  </div>
+</section>
