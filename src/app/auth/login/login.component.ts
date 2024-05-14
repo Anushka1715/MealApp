@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit{
         alert(res.message);
         // console.log(res);
         this.auth.storeToken(res.token);
-        this.router.navigate(['home']);
+        this.router.navigate(['app/home']);
       },
       error:(err) => {
         alert(err.error.message)

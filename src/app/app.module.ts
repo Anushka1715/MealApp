@@ -15,14 +15,16 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { SidenavComponent } from './shared/sidenav/sidenav.component';
+import { LayoutComponent } from './layout/layout.component';
+import { LayoutModule } from './layout/layout.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
     NavbarComponent,
     FooterComponent,
-    SidenavComponent
+    SidenavComponent,
+    LayoutComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +35,8 @@ import { SidenavComponent } from './shared/sidenav/sidenav.component';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    HttpClientModule
+    HttpClientModule,
+    LayoutModule
   ],
   providers: [{
     provide:HTTP_INTERCEPTORS,
