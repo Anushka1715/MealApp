@@ -3,6 +3,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import ValidateForm from '../helpers/validateForm';
 import { AuthServiceService } from '../services/auth-service.service';
 import { Route, Router } from '@angular/router';
+import { UsersService } from 'src/app/shared/services/users.service';
+import { NgToastService } from 'ng-angular-popup';
 
 
 @Component({
@@ -16,7 +18,9 @@ export class LoginComponent implements OnInit{
 
   constructor(private fb:FormBuilder,
     private auth:AuthServiceService,
-    private router: Router){
+    private router: Router,
+    private userStore:UsersService,
+    private toast:NgToastService){
 
   }
   ngOnInit(): void {
@@ -36,13 +40,23 @@ export class LoginComponent implements OnInit{
     subscribe({
       next:(res) =>{
 
-        alert(res.message);
-        // console.log(res);
-        this.auth.storeToken(res.token);
+        // alert("login Success!");
+
+        this.toast.success({detail:"SUCCESS",summary:"Login Sucessful",duration:5000});
+
+        console.log(res);
+        this.auth.storeToken(res.accessToken);
+        this.auth.storeRefreshToken(res.refreshToken);
+        const tokenPayload = this.auth.decodeToken();
+        this.userStore.setFullNameForUser(tokenPayload.unique_name);
+        // console.log(tokenPayload);
+        this.userStore.setRoleForUser(tokenPayload.role);
         this.router.navigate(['app/home']);
       },
       error:(err) => {
-        alert(err.error.message)
+        this.toast.error({detail:"ERROR",summary:"Something went wrong!",duration:5000});
+        
+        console.log(err.error.message)
       } 
     })
 
@@ -55,5 +69,4 @@ export class LoginComponent implements OnInit{
     }
   }
 
-  
 }

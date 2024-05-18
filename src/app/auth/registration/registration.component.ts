@@ -8,6 +8,7 @@ import {
 import ValidateForm from '../helpers/validateForm';
 import { AuthServiceService } from '../services/auth-service.service';
 import { Router } from '@angular/router';
+import { NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-registration',
@@ -61,7 +62,8 @@ export class RegistrationComponent implements OnInit {
 
   constructor(private fb: FormBuilder, 
     private auth: AuthServiceService,
-    private router:Router) {}
+    private router:Router,
+    private toast:NgToastService) {}
 
   ngOnInit(): void {
     this.signUpForm = this.fb.group(
@@ -132,7 +134,8 @@ export class RegistrationComponent implements OnInit {
       // logic of signup
       this.auth.register(this.signUpForm.value).subscribe({
         next: (res) => {
-          alert(res.message);
+          // alert(res.message);
+          this.toast.success({detail:"SUCCESS",summary:"User Registered Sucessfully!",duration:5000})
           this.signUpForm.reset();
           this.router.navigate(['login']);
         },

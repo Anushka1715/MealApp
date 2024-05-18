@@ -17,6 +17,7 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { SidenavComponent } from './shared/sidenav/sidenav.component';
 import { LayoutComponent } from './layout/layout.component';
 import { LayoutModule } from './layout/layout.module';
+import { NgToastModule } from 'ng-angular-popup';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { LayoutModule } from './layout/layout.module';
     MatButtonModule,
     MatSelectModule,
     HttpClientModule,
-    LayoutModule
+    LayoutModule,
+    NgToastModule
   ],
   providers: [{
     provide:HTTP_INTERCEPTORS,
