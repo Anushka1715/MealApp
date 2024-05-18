@@ -3,6 +3,7 @@
     align-items: flex-start;
     justify-content: space-between;
   }
+
   /* @media (max-width: 991.98px) { */
     @media (max-width: 991.98px){ 
     .login-content {
@@ -18,6 +19,11 @@
     background: url(../../../assets/Images/bg.jpg) no-repeat top center;
     background: url(../../../assets/Images/bg.jpg) no-repeat top center;
   }
+
+.login-content-lt{
+  position: sticky !important;
+}
+
   @media (max-width: 991.98px) {
     .login-content .login-content-lt {
       flex: 0 0 100%;
@@ -36,14 +42,14 @@
     flex: 0 0 35%;
     width: 35%;
     background-color: #fff;
-    padding-top: 200px;
+    padding-top: 600px;
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #666b7a rgba(33, 37, 41, 0);
+    scrollbar-width: none;
+    /* scrollbar-color: #666b7a rgba(33, 37, 41, 0); */
   }
   @media (max-width: 991.98px) {
     .login-content .login-content-rt {

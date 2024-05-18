@@ -39,9 +39,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #666b7a rgba(33, 37, 41, 0);
+    overflow: hidden;
+    /* scrollbar-width: none;
+    scrollbar-color: #666b7a rgba(33, 37, 41, 0); */
   }
   @media (max-width: 991.98px) {
     .login-content .login-content-rt {
@@ -323,22 +323,3 @@
     text-align: center;
   }
 
-  .signup a{
-    text-decoration: none;
-    color: #dc3545;
-  }
-
-  .signup a:hover{
-    font-weight: 600;
-    text-decoration: underline #dc3545;
-  }
-
-  .forgotpassword{
-    text-decoration: none;
-    color: #dc3545;
-  }
-
-  .forgotpassword{
-    font-weight: 600;
-    text-decoration: underline #dc3545;
-  }

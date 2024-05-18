@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AuthServiceService } from 'src/app/auth/services/auth-service.service';
 import { ApiService } from 'src/app/services/api.service';
 import { UsersService } from '../services/users.service';
@@ -43,5 +43,10 @@ export class NavbarComponent implements OnInit{
     this.auth.logOut();
   }
 
+  @Output() toggle = new EventEmitter<void>();
+
+  toggleSidenav() {
+    this.toggle.emit();
+  }
 
 }

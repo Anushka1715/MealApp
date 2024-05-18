@@ -10,14 +10,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import {MatSelectModule} from '@angular/material/select';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { HomeComponent } from './home/home.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { SidenavComponent } from './shared/sidenav/sidenav.component';
 import { LayoutComponent } from './layout/layout.component';
-import { LayoutModule } from './layout/layout.module';
 import { NgToastModule } from 'ng-angular-popup';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { AboutUsComponent } from './components/about-us/about-us.component';
+import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions.component';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
+import { ContactUsComponent } from './components/contact-us/contact-us.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +30,11 @@ import { NgToastModule } from 'ng-angular-popup';
     NavbarComponent,
     FooterComponent,
     SidenavComponent,
-    LayoutComponent
+    LayoutComponent,
+    AboutUsComponent,
+    TermsAndConditionsComponent,
+    PrivacyPolicyComponent,
+    ContactUsComponent
   ],
   imports: [
     BrowserModule,
@@ -37,8 +46,10 @@ import { NgToastModule } from 'ng-angular-popup';
     MatButtonModule,
     MatSelectModule,
     HttpClientModule,
-    LayoutModule,
-    NgToastModule
+    NgToastModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule
   ],
   providers: [{
     provide:HTTP_INTERCEPTORS,
