@@ -23,6 +23,22 @@ import { AboutUsComponent } from './components/about-us/about-us.component';
 import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { ContactUsComponent } from './components/contact-us/contact-us.component';
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faFacebook } from '@fortawesome/free-brands-svg-icons';
+import { faInstagram } from '@fortawesome/free-brands-svg-icons';
+import { faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
+import { faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { ReactiveFormsModule } from '@angular/forms';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { FormsModule } from '@angular/forms';
+import { HomeComponent } from './components/home/home.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio';
+
+//import { MatDateRangeInput, MatDateRangePicker } from '@angular/material/datepicker';  
 
 @NgModule({
   declarations: [
@@ -34,7 +50,8 @@ import { ContactUsComponent } from './components/contact-us/contact-us.component
     AboutUsComponent,
     TermsAndConditionsComponent,
     PrivacyPolicyComponent,
-    ContactUsComponent
+    ContactUsComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -49,13 +66,34 @@ import { ContactUsComponent } from './components/contact-us/contact-us.component
     NgToastModule,
     MatToolbarModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    FontAwesomeModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    FormsModule,
+    MatCardModule,
+    MatDialogModule,
+    MatRadioModule,
+   // MatDateRangeInput,  
+   // MatDateRangePicker 
   ],
   providers: [{
     provide:HTTP_INTERCEPTORS,
     useClass:TokenInterceptor,
     multi:true
-  }],
+  },
+
+],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(library: FaIconLibrary) {
+    library.addIcons(faFacebook);
+    library.addIcons(faInstagram); // Add the Facebook icon here
+    library.addIcons(faLinkedinIn);
+    library.addIcons(faTwitter);
+    library.addIcons(faEye, faEyeSlash);
+
+  }
+ }

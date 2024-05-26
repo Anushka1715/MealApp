@@ -1,3 +1,139 @@
-<p>home works!</p>
 
+   <div class="d-flex mx-5 align-items-center justify-content-evenly">
 
+    <div  class="custom-calendar">
+    <button class="btn btn-danger" (click)="openBookingList()">View Booking</button>
+
+        <mat-calendar [dateClass]="dateClass" [dateFilter]="dateFilter"></mat-calendar>
+        <div class="d-flex justify-content-evenly align-items-center mt-3">
+            <button class="btn btn-danger" (click)="openBookingForm()">Add Booking</button>
+            <button class="btn btn-primary">Show QR</button>
+        </div>
+    </div>
+
+    <div class="ml-3 card-container">
+        <mat-card class="today-card">
+          <mat-card-title>{{ todayDate | date: 'fullDate' }}</mat-card-title>
+          <mat-card-content>
+            <p>{{ mealType }}</p>
+            <p>{{ mealTaken }}</p>
+          </mat-card-content>
+          <button mat-button color="warn" (click)="openFeedbackForm()">Add Feedback</button>
+        </mat-card>
+        <mat-card class="meal-day-card mt-3">
+          <mat-card-title>Meal of the Day</mat-card-title>
+          <mat-card-content>
+            <div class="d-flex justify-content-between">
+              <div>
+                <h3>Lunch</h3>
+                <ul>
+                  <li *ngFor="let item of lunchMenu">{{ item }}</li>
+                </ul>
+              </div>
+              <div>
+                <h3>Dinner</h3>
+                <ul>
+                  <li *ngFor="let item of dinnerMenu">{{ item }}</li>
+                </ul>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+   </div>
+
+   <ng-template #feedbackForm>
+    <div class="feedback-form">
+      <h2 mat-dialog-title>Feedback Form</h2>
+      <mat-dialog-content>
+        <form [formGroup]="feedbackFormGroup" (ngSubmit)="submitFeedback()">
+          <div class="stars">
+            <mat-icon (click)="setStars($event)">star_border</mat-icon>
+            <mat-icon (click)="setStars($event)">star_border</mat-icon>
+            <mat-icon (click)="setStars($event)">star_border</mat-icon>
+            <mat-icon (click)="setStars($event)">star_border</mat-icon>
+            <mat-icon (click)="setStars($event)">star_border</mat-icon>
+          </div>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Message</mat-label>
+            <textarea matInput formControlName="message"></textarea>
+          </mat-form-field>
+          <div class="d-flex justify-content-end">
+            <button mat-button mat-dialog-close>Cancel</button>
+            <button mat-button color="warn" type="submit">Submit</button>
+          </div>
+        </form>
+      </mat-dialog-content>
+    </div>
+  </ng-template>
+
+  <ng-template #bookingForm>
+  <div class="booking-form">
+    <h2 mat-dialog-title>Booking Form</h2>
+    <mat-dialog-content>
+      <form [formGroup]="bookingFormGroup" (ngSubmit)="submitBooking()">
+        <mat-radio-group formControlName="mealType" class="full-width">
+          <mat-label>Meal Type:</mat-label>
+          <mat-radio-button value="lunch">Lunch</mat-radio-button>
+          <mat-radio-button value="dinner">Dinner</mat-radio-button>
+        </mat-radio-group>
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Pick a date range</mat-label>
+          <mat-date-range-input [rangePicker]="picker" formGroupName="dateRange" [dateFilter]="dateFilter">
+            <input matStartDate formControlName="start" placeholder="Start date">
+            <input matEndDate formControlName="end" placeholder="End date" >
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        <div class="d-flex justify-content-end">
+          <button mat-button mat-dialog-close>Cancel</button>
+          <button mat-button color="warn" type="submit">Submit</button>
+        </div>
+      </form>
+    </mat-dialog-content>
+  </div>
+</ng-template>
+
+<ng-template #bookingList>
+  <div class="booking-list">
+    <h2 mat-dialog-title>View Bookings</h2>
+    <mat-dialog-content>
+      <form [formGroup]="bookingListFormGroup" (ngSubmit)="filterBookings()">
+        <div class="form-row">
+          <div class="form-group">
+            <mat-form-field appearance="fill">
+              <mat-label>Select Month</mat-label>
+              <mat-select formControlName="month">
+                <mat-option *ngFor="let month of months" [value]="month.value">{{ month.viewValue }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-form-field appearance="fill">
+              <mat-label>Select Year</mat-label>
+              <mat-select formControlName="year">
+                <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-group">
+            <mat-form-field appearance="fill">
+              <mat-label>Meal Type</mat-label>
+              <mat-select formControlName="mealType">
+                <mat-option value="lunch">Lunch</mat-option>
+                <mat-option value="dinner">Dinner</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+          <button mat-button mat-dialog-close>Cancel</button>
+          <button mat-button color="warn" type="submit">Filter</button>
+        </div>
+      </form>
+      <!-- Bookings display section -->
+    </mat-dialog-content>
+  </div>
+</ng-template>

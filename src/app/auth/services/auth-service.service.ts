@@ -75,6 +75,16 @@ export class AuthServiceService {
     return this.userPayload.role;
   }
 
+  getEmailOfUserFromToken(){
+    if(this.userPayload)
+    return this.userPayload.email;
+  }
+
+  getUserIdOfUserFromToken(){
+    if(this.userPayload)
+    return this.userPayload.nameid;
+  }
+
   renewToken(tokenApi :TokenApiModel){
     return this.http.post<any>(`${environment.apiBaseurl}/User/refresh`,tokenApi);
   }

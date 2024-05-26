@@ -14,7 +14,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
-
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 
 @NgModule({
@@ -23,7 +25,8 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     RegistrationComponent,
     LoginComponent,
     ForgotPasswordComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    ChangePasswordComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +37,14 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     MatButtonModule,
     MatSelectModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    FontAwesomeModule,
   ],
 })
-export class AuthModule { }
+export class AuthModule { 
+  constructor(library: FaIconLibrary) {
+
+    library.addIcons(faEye, faEyeSlash);
+
+  }
+}

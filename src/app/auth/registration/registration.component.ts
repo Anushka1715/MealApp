@@ -9,6 +9,8 @@ import ValidateForm from '../helpers/validateForm';
 import { AuthServiceService } from '../services/auth-service.service';
 import { Router } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
+import { faEye,faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 
 @Component({
   selector: 'app-registration',
@@ -59,11 +61,24 @@ export class RegistrationComponent implements OnInit {
   roles = ['Employee', 'Intern', 'Guest'];
   signUpForm!: FormGroup;
   showEmployeeIdField: boolean = false;
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
+  passwordVisible = false;
+  confirmPasswordVisible=false;
 
   constructor(private fb: FormBuilder, 
     private auth: AuthServiceService,
     private router:Router,
     private toast:NgToastService) {}
+
+    togglePasswordVisibility() {
+      this.passwordVisible = !this.passwordVisible;
+    }
+
+    toggleConfirmPasswordVisibility() {
+      this.confirmPasswordVisible = !this.confirmPasswordVisible;
+    }
+    
 
   ngOnInit(): void {
     this.signUpForm = this.fb.group(
@@ -71,7 +86,7 @@ export class RegistrationComponent implements OnInit {
         role: ['', Validators.required],
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
-        emailId: ['', [Validators.email, Validators.required]],
+        emailId: ['', [Validators.required,this.customEmailValidator]],
         phoneNumber: ['', [Validators.required, this.phoneNumberValidator]],
         password: ['', Validators.required],
         confirmPassword: ['', Validators.required],
@@ -81,6 +96,14 @@ export class RegistrationComponent implements OnInit {
         validator: this.passwordMatchValidator,
       }
     );
+  }
+
+  
+
+  customEmailValidator(control: FormControl): { [key: string]: any } | null {
+    const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    const valid = pattern.test(control.value);
+    return valid ? null : { 'invalidEmail': true };
   }
 
   passwordMatchValidator(formGroup: FormGroup) {
@@ -107,7 +130,8 @@ export class RegistrationComponent implements OnInit {
       this.showEmployeeIdField = true;
     } else {
       this.showEmployeeIdField = false;
-      // this.signUpForm.get('empId')!.clearValidators();
+      this.signUpForm.removeControl('empId');
+      //  this.signUpForm.get('empId')!.clearValidators();
     }
     // this.signUpForm.get('empId')!.updateValueAndValidity();
   }
@@ -146,6 +170,7 @@ export class RegistrationComponent implements OnInit {
     } else {
       //logic for throwing errors
       ValidateForm.validateallFormFields(this.signUpForm);
+      this.toast.error({detail:"ERROR",summary:"Invalid Form Fields!",duration:3000});
     }
   }
 }

@@ -5,6 +5,7 @@ import { ResetPassword } from 'src/app/models/reset-password.model';
 import ValidateForm from '../helpers/validateForm';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { NgToastService } from 'ng-angular-popup';
+import { faEye,faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-reset-password',
@@ -17,6 +18,11 @@ export class ResetPasswordComponent implements OnInit{
   emailToReset!:string;
   emailToken!:string;
   resetPasswordObj = new ResetPassword();
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
+  passwordVisible = false;
+  confirmPasswordVisible=false;
+
 
   constructor(private fb:FormBuilder,
     private activatedRoute:ActivatedRoute,
@@ -33,6 +39,8 @@ export class ResetPasswordComponent implements OnInit{
     validator: this.passwordMatchValidator,
   });
 
+  
+
   this.activatedRoute.queryParams.subscribe(val => {
     this.emailToReset= val['email'];
     let uriToken = val['code'];
@@ -42,6 +50,15 @@ export class ResetPasswordComponent implements OnInit{
     console.log(this.emailToken);
   });
   }
+
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
+  }
+
+ toggleConfirmPasswordVisibility() {
+    this.confirmPasswordVisible = !this.confirmPasswordVisible;
+  }
+  
 
   reset(){
     if(this.resetPasswordForm.valid){

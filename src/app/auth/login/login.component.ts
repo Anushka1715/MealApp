@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import ValidateForm from '../helpers/validateForm';
 import { AuthServiceService } from '../services/auth-service.service';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UsersService } from 'src/app/shared/services/users.service';
 import { NgToastService } from 'ng-angular-popup';
-
+import { faEye,faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +15,9 @@ import { NgToastService } from 'ng-angular-popup';
 export class LoginComponent implements OnInit{
 
   loginForm!:FormGroup;
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
+  passwordVisible = false;
 
   constructor(private fb:FormBuilder,
     private auth:AuthServiceService,
@@ -25,10 +28,21 @@ export class LoginComponent implements OnInit{
   }
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      email:['',Validators.required],
+      email:['',[Validators.required,this.customEmailValidator]],
       password:['',Validators.required]
     })
   }
+
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
+  }
+
+  customEmailValidator(control: FormControl): { [key: string]: any } | null {
+    const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    const valid = pattern.test(control.value);
+    return valid ? null : { 'invalidEmail': true };
+  }
+
 
   onLogin(){
     if(this.loginForm.valid){
@@ -51,6 +65,7 @@ export class LoginComponent implements OnInit{
         this.userStore.setFullNameForUser(tokenPayload.unique_name);
         // console.log(tokenPayload);
         this.userStore.setRoleForUser(tokenPayload.role);
+        this.userStore.setEmailForUser(tokenPayload.email);
         this.router.navigate(['app/home']);
       },
       error:(err) => {
@@ -65,7 +80,7 @@ export class LoginComponent implements OnInit{
       
       //throw error using toaster and required fields
       ValidateForm.validateallFormFields(this.loginForm);
-      alert("Your form is invalid!")
+      this.toast.error({detail:"ERROR",summary:"Invalid Form fields!",duration:3000});
     }
   }
 

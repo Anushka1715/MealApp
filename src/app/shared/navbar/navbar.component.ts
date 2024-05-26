@@ -14,7 +14,8 @@ export class NavbarComponent implements OnInit{
   // public users:any=[];
 
   public fullName:string ="";
-
+public email:string ="";
+public userId:string="";
 
   constructor(private api:ApiService,
     private auth:AuthServiceService,
@@ -33,6 +34,14 @@ export class NavbarComponent implements OnInit{
    .subscribe(val => {
     let fullNameFromToken = this.auth.getFullNameFromToken();
     this.fullName = val || fullNameFromToken
+
+    let emailFromToken = this.auth.getEmailOfUserFromToken();
+    this.email = val || emailFromToken
+    console.log("Email:",this.email);
+
+    let userIdFromToken = this.auth.getUserIdOfUserFromToken();
+    this.userId = val || userIdFromToken
+    console.log("UserId:",this.userId);
 
     console.log("FullName:",this.fullName);
    })

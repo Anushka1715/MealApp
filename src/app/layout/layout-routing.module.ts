@@ -7,6 +7,7 @@ import { AboutUsComponent } from '../components/about-us/about-us.component';
 import { TermsAndConditionsComponent } from '../components/terms-and-conditions/terms-and-conditions.component';
 import { PrivacyPolicyComponent } from '../components/privacy-policy/privacy-policy.component';
 import { ContactUsComponent } from '../components/contact-us/contact-us.component';
+import { ChangePasswordComponent } from '../auth/change-password/change-password.component';
 
 const routes: Routes = [{
   path:'',
@@ -17,16 +18,25 @@ const routes: Routes = [{
     canActivate:[authGuard]
   },{
     path:'aboutUs',
-    component:AboutUsComponent
+    component:AboutUsComponent,
+    canActivate:[authGuard]
   },{
     path:'termsAndConditions',
-    component:TermsAndConditionsComponent
+    component:TermsAndConditionsComponent,
+    canActivate:[authGuard]
   },{
     path:'privacyPolicy',
-    component:PrivacyPolicyComponent
+    component:PrivacyPolicyComponent,
+    canActivate:[authGuard]
   },{
     path:'contactUs',
-    component:ContactUsComponent
+    component:ContactUsComponent,
+    canActivate:[authGuard]
+  },
+  {
+    path:'change-password',
+    component:ChangePasswordComponent,
+    canActivate:[authGuard]
   }]
 }];
 

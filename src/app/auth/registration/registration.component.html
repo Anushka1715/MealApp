@@ -144,7 +144,8 @@
           <small
             *ngIf="
               signUpForm.controls['emailId'].dirty &&
-              signUpForm.hasError('email', 'emailId')
+              signUpForm.hasError('invalidEmail', 'emailId') &&
+              !signUpForm.hasError('required', 'emailId')
             "
             class="text-danger"
             >*Invalid email format</small
@@ -201,12 +202,15 @@
               formControlName="password"
               id="password-field"
               class="form-control"
-              type="password"
+              [type]="passwordVisible ? 'text' : 'password'" 
             />
-            <span
+            <fa-icon [icon]="passwordVisible ? faEye:faEyeSlash" (click)="togglePasswordVisibility()"
+              class="toggle-icon">
+            </fa-icon>
+            <!-- <span
               toggle="#password-field"
               class="icon-eye-close field-icon toggle-password"
-            ></span>
+            ></span> -->
           </div>
           <small
             *ngIf="
@@ -228,12 +232,15 @@
                 signUpForm.hasError('passwordMismatch', 'confirmPassword')
               "
               class="form-control"
-              type="password"
+              [type]="confirmPasswordVisible ? 'text' : 'password'" 
             />
-            <span
+            <fa-icon [icon]="confirmPasswordVisible ? faEye:faEyeSlash" (click)="toggleConfirmPasswordVisibility()"
+              class="toggle-icon">
+            </fa-icon>
+            <!-- <span
               toggle="#password-field"
               class="icon-eye-close field-icon toggle-password"
-            ></span>
+            ></span> -->
           </div>
           <small
             *ngIf="
@@ -247,12 +254,12 @@
 
         <div class="d-flex align-items-center justify-content-between">
           <div class="form-group mb-0">
-            <label class="custom-checkbox mb-0"
+            <!-- <label class="custom-checkbox mb-0"
               ><span class="checkbox__title">Remember Me</span>
               <input class="checkbox__input" type="checkbox" /><span
                 class="checkbox__checkmark"
               ></span>
-            </label>
+            </label> -->
           </div>
         </div>
 

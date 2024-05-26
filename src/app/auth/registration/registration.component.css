@@ -55,6 +55,7 @@
     .login-content .login-content-rt {
       flex: 0 0 100%;
       width: 100%;
+      padding-top: 80px;
       height: auto;
     }
   }
@@ -153,10 +154,23 @@
     font-weight: 400;
     padding: 6px 12px 6px 24px;
   }
+
   .login-content .login-content-rt .login-box .input-addon {
     position: relative;
+    display: flex;
+    align-items: center;
   }
-  .login-content .login-content-rt .login-box .input-addon .icon-after {
+  .login-content .login-content-rt .login-box .input-addon input{
+    flex: 1;
+    padding-right: 30px;
+  }
+  .toggle-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+  }
+
+  /* .login-content .login-content-rt .login-box .input-addon .icon-after {
     
     right: 18px;
     top: 50%;
@@ -173,7 +187,7 @@
   }
   .login-content .login-content-rt .login-box .input-addon .icon-after.icon-red {
     color: #D13434;
-  }
+  } */
   .login-content .login-content-rt .login-box .utility {
     text-align: right;
   }

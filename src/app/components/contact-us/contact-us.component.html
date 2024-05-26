@@ -4,32 +4,32 @@
     <div class="contact-box">
         <div class="contact-left">
             <h3>Send Us</h3>
-            <form>
+            <form [formGroup]="contactUsForm">
                 <div class="input-row">
                     <div class="input-group">
                         <label>Name</label>
-                        <input type="text" placeholder="e.g.Anushka Mahajan">
+                        <input type="text" formControlName="name" placeholder="e.g.Anushka Mahajan">
                     </div>
                     <div class="input-group">
                         <label>Phone</label>
-                        <input type="text" placeholder="+91 1234 5678 90">
+                        <input type="text" formControlName="phone" placeholder="+91 1234 5678 90">
                     </div>
                 </div>
                 <div class="input-row">
                     <div class="input-group">
                         <label>Email</label>
-                        <input type="email" placeholder="anushkamahajan1715@gmail.com">
+                        <input type="email" formControlName="email" placeholder="anushkamahajan1715@gmail.com">
                     </div>
                     <div class="input-group">
                         <label>Subject</label>
-                        <input type="text" placeholder="any query you have.">
+                        <input type="text" formControlName="subject" placeholder="any query you have.">
                     </div>
                 </div>
 
                 <label>Message</label>
-                <textarea rows="5" placeholder="Your Message"></textarea>
+                <textarea rows="5" formControlName="message" placeholder="Your Message"></textarea>
 
-                <button type="submit">Send</button>
+                <button (click)="OnSend()" type="submit">Send</button>
             </form>
 
 

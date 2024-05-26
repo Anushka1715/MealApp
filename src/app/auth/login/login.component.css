@@ -141,8 +141,21 @@
   }
   .login-content .login-content-rt .login-box .input-addon {
     position: relative;
+    display: flex;
+    align-items: center;
   }
-  .login-content .login-content-rt .login-box .input-addon .icon-after {
+  .login-content .login-content-rt .login-box .input-addon input{
+    flex: 1;
+    padding-right: 30px;
+  }
+  .toggle-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+  }
+
+
+  /* .login-content .login-content-rt .login-box .input-addon .icon-after {
     position: absolute;
     right: 18px;
     top: 50%;
@@ -159,7 +172,7 @@
   }
   .login-content .login-content-rt .login-box .input-addon .icon-after.icon-red {
     color: #D13434;
-  }
+  } */
   .login-content .login-content-rt .login-box .utility {
     text-align: right;
   }

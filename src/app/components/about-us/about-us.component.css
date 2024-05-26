@@ -1,0 +1,28 @@
+
+
+  .text {
+    font-family: Arial, sans-serif;
+    background-image: url(../../../assets/images/aboutUs.jpg);
+    background-size: cover;
+    max-width: 100%; 
+    text-align: left;
+    height: 77vh;
+    /* background-position: center; */
+  padding:30px;
+    color:#fff;
+   
+  }
+
+
+  .content{
+    max-width: 50%;
+  text-align: left;
+  }
+
+  
+  a {
+    text-decoration: none; 
+  }
+  a:hover {
+    color: #fdfdfd; /* Change hyperlink color on hover */
+  }

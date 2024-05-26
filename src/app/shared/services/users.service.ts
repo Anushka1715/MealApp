@@ -8,6 +8,8 @@ export class UsersService {
 
   private fullName$ = new BehaviorSubject<string>("");
   private role$ = new BehaviorSubject<string>("");
+  private email$ = new BehaviorSubject<string>("");
+  private userId$ = new BehaviorSubject<string>("");
 
   constructor() { }
 
@@ -27,4 +29,21 @@ export class UsersService {
   public setFullNameForUser(fullName:string){
     this.fullName$.next(fullName);
   }
+
+  public getEmailFromUser(){
+    return this.email$.asObservable();
+  }
+
+  public setEmailForUser(email:string){
+    this.email$.next(email);
+  }
+
+  public getUserIdFromUser(){
+    return this.userId$.asObservable();
+  }
+
+  public setUserIdForUser(email:string){
+    this.userId$.next(email);
+  }
+
 }
