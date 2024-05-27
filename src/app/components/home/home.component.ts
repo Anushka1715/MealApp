@@ -4,9 +4,10 @@ import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
 import { NgToastService } from 'ng-angular-popup';
 import { BookingService } from 'src/app/services/booking.service';
+import { DateAdapter } from '@angular/material/core';
 
 interface Meal {
-  userId: number;
+  userId: string;
   mealType: string;
   date: string;
 }
@@ -19,63 +20,49 @@ interface Meal {
 })
 export class HomeComponent implements OnInit{
 
-  public mealData:Meal[] = [
-    {
-      userId : 1,
-      mealType: "lunch",
-      date: "2024-05-19"
-    },
-    {
-      userId: 2,
-      mealType: "dinner",
-      date: "2024-05-20"
-    },
-    {
-      userId: 3,
-      mealType: "lunch",
-      date: "2024-05-21"
-    },
-    {
-      userId: 4,
-      mealType: "dinner",
-      date: "2024-05-22"
-    },
-    {
-      userId: 5,
-      mealType: "lunch",
-      date: "2024-05-23"
-    },
-    {
-      userId: 6,
-    mealType: "dinner",
-      date: "2024-05-24"
-    },
-    {
-      userId: 7,
-      mealType: "lunch",
-      date: "2024-05-27"
-    },
-    {
-      userId: 8,
-      mealType: "dinner",
-      date: "2024-05-28"
-    },
-    {
-      userId: 9,
-      mealType: "lunch",
-      date: "2024-05-29"
-    },
-    {
-      userId: 10,
-      mealType: "dinner",
-      date: "2024-05-30"
-    }
-  ];
+  public mealData:Meal[] = [];
+  
 
-  public lunchMenu: string[] = ['Salad', 'Paneer Sabji', 'Roti','Dal','Rice','Papad'];
-  public dinnerMenu: string[] = ['Soup', 'Fried Rice', 'Salad'];
+  public lunchMenu: string[] = [];
+  public dinnerMenu: string[] = [];
+  //public mealMessage: string = '';
 
+
+public selectedDate: Date | null = new Date();
   public todayDate: Date = new Date();
+
+  
+  public weekMenus: { [key: string]: { lunch: string[], dinner: string[] } } = {
+    'Monday': {
+      lunch: ['Aloo Gobi', 'Paneer Butter Masala', 'Roti', 'Dal Tadka', 'Rice', 'Papad'],
+      dinner: ['Tomato Soup', 'Vegetable Pulao', 'Salad']
+    },
+    'Tuesday': {
+      lunch: ['Bhindi Masala', 'Chole', 'Roti', 'Rajma', 'Rice', 'Papad'],
+      dinner: ['Sweet Corn Soup', 'Jeera Rice', 'Salad']
+    },
+    'Wednesday': {
+      lunch: ['Kadai Paneer', 'Aloo Palak', 'Roti', 'Moong Dal', 'Rice', 'Papad'],
+      dinner: ['Lemon Coriander Soup', 'Veg Biryani', 'Salad']
+    },
+    'Thursday': {
+      lunch: ['Baingan Bharta', 'Matar Paneer', 'Roti', 'Toor Dal', 'Rice', 'Papad'],
+      dinner: ['Hot and Sour Soup', 'Curd Rice', 'Salad']
+    },
+    'Friday': {
+      lunch: ['Mix Veg Curry', 'Dal Makhani', 'Roti', 'Chana Dal', 'Rice', 'Papad'],
+      dinner: ['Manchow Soup', 'Peas Pulao', 'Salad']}
+    // },
+    // 'Saturday': {
+    //   lunch: [],
+    //   dinner: []
+    // },
+    // 'Sunday': {
+    //   lunch: [],
+    //   dinner: []
+    // }
+  };
+
   public mealType: string = '';
   public mealTaken: string = '';
 
@@ -105,7 +92,9 @@ export class HomeComponent implements OnInit{
 
   constructor(private dialog: MatDialog, private fb: FormBuilder,
     private bookingService:BookingService,
-    private toast:NgToastService){
+    private toast:NgToastService,
+    private dateAdapter: DateAdapter<Date>){
+
     this.feedbackFormGroup = this.fb.group({
     
       message: ['']
@@ -124,13 +113,37 @@ export class HomeComponent implements OnInit{
       year: '',
       mealType: ''
     });
+
+    this.dateAdapter.setLocale('en-US');
+   
   }
 
   ngOnInit(): void {
+
+   // this.fetchBookings();
+
+    this.updateMenu();
+
       this.setMealType();
 
-      const currentYear = new Date().getFullYear();
+    const currentYear = new Date().getFullYear();
     this.years = [currentYear, currentYear + 1, currentYear + 2];
+
+   
+  }
+
+  updateMenu() {
+    const dayOfWeek = this.selectedDate? this.selectedDate.toLocaleString('en-us', { weekday: 'long' }) : '';
+
+    // if (dayOfWeek === 'Saturday' || dayOfWeek === 'Sunday') {
+    //   this.mealMessage = 'Meal facility is closed';
+    //   this.lunchMenu = [];
+    //   this.dinnerMenu = [];
+    // } else {
+      //this.mealMessage = '';
+      this.lunchMenu = this.weekMenus[dayOfWeek].lunch;
+      this.dinnerMenu = this.weekMenus[dayOfWeek].dinner;
+    //}
   }
 
   setMealType() {
@@ -178,10 +191,17 @@ export class HomeComponent implements OnInit{
       const startDate = this.bookingFormGroup.value.dateRange.start;
     const endDate = this.bookingFormGroup.value.dateRange.end;
 
+        // Ensure dates are set to midnight
+        const adjustedStartDate = new Date(startDate);
+        adjustedStartDate.setHours(0, 0, 0, 0);
+    
+        const adjustedEndDate = new Date(endDate);
+        adjustedEndDate.setHours(0, 0, 0, 0);
+
     const booking = {
       mealType: this.bookingFormGroup.value.mealType,
-      startDate: startDate.toISOString().split('T')[0], // Format to 'YYYY-MM-DD'
-      endDate: endDate.toISOString().split('T')[0]     // Format to 'YYYY-MM-DD'
+      startDate: adjustedStartDate.toISOString().split('T')[0], // Format to 'YYYY-MM-DD'
+      endDate: adjustedEndDate.toISOString().split('T')[0]     // Format to 'YYYY-MM-DD'
     };
       // Handle the form submission
       this.bookingService.createBooking(booking)
@@ -209,15 +229,28 @@ export class HomeComponent implements OnInit{
   }
 
   dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
+
+
+    this.fetchBookings();
+
+    console.log(this.mealData);
     if (cellDate && view === 'month') {
       const cellDateString = cellDate.toISOString().split('T')[0];
-      const isHighlighted = this.mealData.some(meal => meal.date === cellDateString);
+      
+      console.log("in if:",this.mealData);
+
+      // Check if there are any bookings for the current date
+      const hasBooking = this.mealData.some(booking => booking.date === cellDateString);
+  
+      // Determine if the current date is a weekend (Saturday or Sunday)
       const day = cellDate.getDay();
-      if (isHighlighted && (day === 0 || day === 6)) {
+      const isWeekend = day === 0 || day === 6;
+  
+      if (hasBooking && isWeekend) {
         return 'highlight-date disabled-date';
-      } else if (isHighlighted) {
+      } else if (hasBooking) {
         return 'highlight-date';
-      } else if (day === 0 || day === 6) {
+      } else if (isWeekend) {
         return 'disabled-date';
       }
     }
@@ -252,5 +285,41 @@ export class HomeComponent implements OnInit{
       // Set the value of 'stars' in the form group
       this.feedbackFormGroup.controls['stars'].setValue(starIndex + 1);
     }
+  }
+
+  isLunchTime(): boolean {
+    const hours = new Date().getHours();
+    const dayOfWeek = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
+    return hours >= 12 && hours < 14 && dayOfWeek !== 0 && dayOfWeek !== 6; // Lunchtime: 12 PM to 2 PM, excluding Saturday and Sunday
+  }
+  
+  isDinnerTime(): boolean {
+    const hours = new Date().getHours();
+    const dayOfWeek = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
+    return hours >= 19 && hours < 21 && dayOfWeek !== 0 && dayOfWeek !== 6; // Dinner time: 7 PM to 9 PM, excluding Saturday and Sunday
+  }
+  
+  isDisabled(): boolean {
+    return !this.isLunchTime() && !this.isDinnerTime();
+  }
+
+  fetchBookings() {
+    console.log("bookings are getting fetched!")
+
+    this.bookingService.getBookingsByUserId().subscribe({
+      next: (bookings) => {
+        console.log('Bookings:', bookings);
+        this.mealData = bookings.map(booking => ({
+          userId: booking.userId,
+          mealType: booking.mealType,
+          date: new Date(booking.bookingDate).toISOString().split('T')[0]
+        }));
+        this.updateMenu(); // Update the menu once bookings are fetched
+      },
+      error: (error) => {
+        console.error('Error fetching bookings:', error);
+        // Handle the error (e.g., show an error message)
+      }
+    });
   }
 }

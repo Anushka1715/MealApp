@@ -18,8 +18,9 @@ export class BookingService {
     return this.http.post<any>(`${environment.apiBaseurl}/Booking`,requestData);
   }
 
-  getBookingsByUserId(date:string){
+  getBookingsByUserId(){
     const userId = this.auth.getUserIdOfUserFromToken();
-    return this.http.get<any[]>(`${environment.apiBaseurl}/Booking/user/${userId}?date=${date}`);
+    console.log(typeof(userId));
+    return this.http.get<any[]>(`${environment.apiBaseurl}/Booking/user/${userId}`);
   }
 }

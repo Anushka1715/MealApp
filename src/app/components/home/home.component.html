@@ -4,7 +4,10 @@
     <div  class="custom-calendar">
     <button class="btn btn-danger" (click)="openBookingList()">View Booking</button>
 
-        <mat-calendar [dateClass]="dateClass" [dateFilter]="dateFilter"></mat-calendar>
+        <mat-calendar 
+         [(selected)]="selectedDate" (selectedChange)="updateMenu()"
+         [dateClass]="dateClass" [dateFilter]="dateFilter"
+        ></mat-calendar>
         <div class="d-flex justify-content-evenly align-items-center mt-3">
             <button class="btn btn-danger" (click)="openBookingForm()">Add Booking</button>
             <button class="btn btn-primary">Show QR</button>
@@ -18,25 +21,30 @@
             <p>{{ mealType }}</p>
             <p>{{ mealTaken }}</p>
           </mat-card-content>
-          <button mat-button color="warn" (click)="openFeedbackForm()">Add Feedback</button>
+          <button mat-button color="warn" [disabled]="isDisabled()" (click)="openFeedbackForm()">Add Feedback</button>
         </mat-card>
         <mat-card class="meal-day-card mt-3">
           <mat-card-title>Meal of the Day</mat-card-title>
           <mat-card-content>
-            <div class="d-flex justify-content-between">
-              <div>
-                <h3>Lunch</h3>
-                <ul>
-                  <li *ngFor="let item of lunchMenu">{{ item }}</li>
-                </ul>
-              </div>
-              <div>
-                <h3>Dinner</h3>
-                <ul>
-                  <li *ngFor="let item of dinnerMenu">{{ item }}</li>
-                </ul>
-              </div>
+            <!-- <div *ngIf="mealMessage; else mealContent">
+              <p>{{ mealMessage }}</p>
             </div>
+            <ng-template #mealContent> -->
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h3>Lunch</h3>
+                  <ul>
+                    <li *ngFor="let item of lunchMenu">{{ item }}</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3>Dinner</h3>
+                  <ul>
+                    <li *ngFor="let item of dinnerMenu">{{ item }}</li>
+                  </ul>
+                </div>
+              </div>
+            <!-- </ng-template> -->
           </mat-card-content>
         </mat-card>
       </div>
