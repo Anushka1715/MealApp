@@ -47,9 +47,9 @@ export class ChangePasswordComponent {
                     console.log('Success:', res);
                 },
                 error: (err) => {
-                    console.error('Error:', err);
+                    console.log('Error:', err);
                     if (err.error) {
-                        console.error('Error details:', err.error);
+                        console.log('Error details:', err.error);
                     }
                 }
             });

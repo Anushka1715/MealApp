@@ -37,7 +37,10 @@ import { HomeComponent } from './components/home/home.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
-
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { DatePipe } from '@angular/common';
+import { QRCodeModule } from 'angularx-qrcode';
+// import { NgxQRCodeModule } from '@techiediaries/ngx-qrcode';
 //import { MatDateRangeInput, MatDateRangePicker } from '@angular/material/datepicker';  
 
 @NgModule({
@@ -75,6 +78,7 @@ import { MatRadioModule } from '@angular/material/radio';
     MatCardModule,
     MatDialogModule,
     MatRadioModule,
+    QRCodeModule
    // MatDateRangeInput,  
    // MatDateRangePicker 
   ],
@@ -83,7 +87,10 @@ import { MatRadioModule } from '@angular/material/radio';
     useClass:TokenInterceptor,
     multi:true
   },
-
+  DatePipe,
+  {
+    provide:MAT_DATE_LOCALE,useValue:'en-GB'
+  }
 ],
   bootstrap: [AppComponent]
 })
