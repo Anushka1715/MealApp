@@ -5,7 +5,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
 import { NgToastService } from 'ng-angular-popup';
@@ -145,20 +145,20 @@ export class HomeComponent implements OnInit {
     });
 
     this.bookingFormGroup = this.fb.group({
-      mealType: ['lunch'],
+      mealType: ['lunch',Validators.required],
       dateRange: this.fb.group({
-        start: [],
-        end: [],
+        start: [null, Validators.required],
+        end: [null, Validators.required],
       }),
     });
 
     this.cancelBookingFormGroup = this.fb.group({
-      mealType: ['lunch'],
+      mealType: ['lunch',Validators.required],
     });
 
     this.quickBookingFormGroup = this.fb.group({
       bookingDate: [this.datePipe.transform(this.selectedDate, 'yyyy-MM-dd')],
-      mealType: ['lunch']
+      mealType: ['lunch',Validators.required]
     });
 
     this.dateAdapter.setLocale('en-US');
@@ -220,6 +220,10 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  closeQuickBooking(){
+    this.quickBookingFormGroup.reset();
+    this.dialog.closeAll();
+  }
 
   submitQuickBooking(){
     if (this.quickBookingFormGroup.valid) {
@@ -262,6 +266,11 @@ export class HomeComponent implements OnInit {
       width: '400px',
       backdropClass: 'backdrop-blur',
     });
+  }
+  
+  closeCancelBooking(){
+    this.cancelBookingFormGroup.reset();
+    this.dialog.closeAll();
   }
 
   submitCancelBooking() {
@@ -307,6 +316,14 @@ export class HomeComponent implements OnInit {
       width: '400px',
       backdropClass: 'backdrop-blur',
     });
+  }
+  closeBooking(){
+    this.bookingFormGroup.reset({
+      mealType: 'lunch', // Reset to default value 'lunch'
+      dateRange: {
+        start: null,
+        end: null}});
+    this.dialog.closeAll();
   }
 
   openBookingList() {
