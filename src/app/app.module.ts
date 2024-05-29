@@ -40,6 +40,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { QRCodeModule } from 'angularx-qrcode';
+import {MatTableModule} from '@angular/material/table';
+import { QrdialogComponent } from './qrdialog/qrdialog.component';
 // import { NgxQRCodeModule } from '@techiediaries/ngx-qrcode';
 //import { MatDateRangeInput, MatDateRangePicker } from '@angular/material/datepicker';  
 
@@ -54,7 +56,8 @@ import { QRCodeModule } from 'angularx-qrcode';
     TermsAndConditionsComponent,
     PrivacyPolicyComponent,
     ContactUsComponent,
-    HomeComponent
+    HomeComponent,
+    QrdialogComponent
   ],
   imports: [
     BrowserModule,
@@ -78,7 +81,8 @@ import { QRCodeModule } from 'angularx-qrcode';
     MatCardModule,
     MatDialogModule,
     MatRadioModule,
-    QRCodeModule
+    QRCodeModule,
+    MatTableModule
    // MatDateRangeInput,  
    // MatDateRangePicker 
   ],

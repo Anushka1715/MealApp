@@ -11,12 +11,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { NgToastService } from 'ng-angular-popup';
 import { BookingService } from 'src/app/services/booking.service';
 import { DateAdapter } from '@angular/material/core';
-import{DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
+import { QRCodeService } from 'src/app/services/qrcode.service';
+import { QrdialogComponent } from 'src/app/qrdialog/qrdialog.component';
 
 interface Meal {
   userId: string;
   mealType: string;
   date: string | null;
+  isCancelled: boolean;
 }
 
 @Component({
@@ -98,10 +101,12 @@ export class HomeComponent implements OnInit {
   feedbackFormGroup!: FormGroup;
   bookingFormGroup!: FormGroup;
   cancelBookingFormGroup!: FormGroup;
+  quickBookingFormGroup!:FormGroup;
 
-
+  todaysBooking: any = [];
   public bookings: any[] = [];
   public filteredBookingsList: any[] = [];
+  displayedColumns: string[] = ['date', 'mealType'];
   public bookingListFormGroup!: FormGroup;
   public filteredBookings: Meal[] = [];
   public months = [
@@ -125,14 +130,15 @@ export class HomeComponent implements OnInit {
   @ViewChild('bookingForm') bookingFormTemplate!: TemplateRef<any>;
   @ViewChild('cancelBookingForm') cancelBookingFormTemplate!: TemplateRef<any>;
   @ViewChild('bookingList') bookingListTemplate!: TemplateRef<any>;
-
+  @ViewChild('quickBookingForm') quickBookingTemplate!:TemplateRef<any>;
   constructor(
     private dialog: MatDialog,
     private fb: FormBuilder,
     private bookingService: BookingService,
+    private qRCodeService: QRCodeService,
     private toast: NgToastService,
     private dateAdapter: DateAdapter<Date>,
-    private datePipe:DatePipe
+    private datePipe: DatePipe
   ) {
     this.feedbackFormGroup = this.fb.group({
       message: [''],
@@ -147,13 +153,12 @@ export class HomeComponent implements OnInit {
     });
 
     this.cancelBookingFormGroup = this.fb.group({
-      mealType: ['lunch']
+      mealType: ['lunch'],
     });
 
-    this.bookingListFormGroup = this.fb.group({
-      month: [''],
-      year: [''],
-      mealType: [''],
+    this.quickBookingFormGroup = this.fb.group({
+      bookingDate: [this.datePipe.transform(this.selectedDate, 'yyyy-MM-dd')],
+      mealType: ['lunch']
     });
 
     this.dateAdapter.setLocale('en-US');
@@ -162,12 +167,24 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     // this.fetchBookings();
 
-    this.updateMenu();
+    this.bookingListFormGroup = this.fb.group({
+      month: [null],
+      year: [null],
+      mealType: [null],
+    });
 
     this.getBookings();
 
+    this.updateMenu();
+
     const currentYear = new Date().getFullYear();
     this.years = [currentYear, currentYear + 1, currentYear + 2];
+
+    this.checkShowQRButton();
+    // Optional: set an interval to update the button visibility periodically
+    setInterval(() => {
+      this.checkShowQRButton();
+    }, 60000); // Update every minute
   }
 
   updateMenu() {
@@ -196,28 +213,83 @@ export class HomeComponent implements OnInit {
       : 'No meal taken today';
   }
 
+  openQuickBookingForm() {
+    this.dialog.open(this.quickBookingTemplate  , {
+      width: '400px',
+      backdropClass: 'backdrop-blur',
+    });
+  }
+
+
+  submitQuickBooking(){
+    if (this.quickBookingFormGroup.valid) {
+      const bookingDate = this.datePipe.transform(this.selectedDate, 'yyyy-MM-dd');
+      const mealType = this.quickBookingFormGroup.value.mealType;
+
+      if (bookingDate) {
+        const requestData = {
+          date: bookingDate,
+          mealType,
+        };
+
+        this.bookingService.quickBooking(requestData).subscribe({
+          next: () => {
+            this.toast.success({
+              detail: 'SUCCESS',
+              summary: 'Booking successful!',
+              duration: 3000,
+            });
+            this.quickBookingFormGroup.reset({
+              bookingDate: this.datePipe.transform(this.selectedDate, 'yyyy-MM-dd'),
+              mealType: 'lunch'
+            });
+            this.dialog.closeAll();
+          },
+          error: (err) => {
+            this.toast.error({
+              detail: 'ERROR',
+              summary: err.message,
+              duration: 3000,
+            });
+          }
+        });
+      }
+    }
+  }
+
   openCancelBookingForm() {
     this.dialog.open(this.cancelBookingFormTemplate, {
       width: '400px',
-      backdropClass: 'backdrop-blur'
+      backdropClass: 'backdrop-blur',
     });
   }
 
   submitCancelBooking() {
     if (this.cancelBookingFormGroup.valid) {
-      const bookingDate = this.datePipe.transform(this.selectedDate,'yyyy-MM-dd');
+      const bookingDate = this.datePipe.transform(
+        this.selectedDate,
+        'yyyy-MM-dd'
+      );
       const mealType = this.cancelBookingFormGroup.value.mealType;
 
       if (bookingDate) {
         this.bookingService.cancelBooking(bookingDate, mealType).subscribe({
           next: () => {
-            this.toast.success({ detail: "SUCCESS", summary: "Booking cancelled successfully!", duration: 3000 });
+            this.toast.success({
+              detail: 'SUCCESS',
+              summary: 'Booking cancelled successfully!',
+              duration: 3000,
+            });
             this.cancelBookingFormGroup.reset();
             this.dialog.closeAll();
           },
           error: (err) => {
-            this.toast.error({ detail: "ERROR", summary: err.message, duration: 3000 });
-          }
+            this.toast.error({
+              detail: 'ERROR',
+              summary: err.message,
+              duration: 3000,
+            });
+          },
         });
       }
     }
@@ -259,8 +331,6 @@ export class HomeComponent implements OnInit {
       const startDate = this.bookingFormGroup.value.dateRange.start;
       const endDate = this.bookingFormGroup.value.dateRange.end;
 
-      
-
       // Ensure dates are set to midnight
       // const adjustedStartDate = new Date(startDate);
       // adjustedStartDate.setHours(0, 0, 0, 0);
@@ -272,8 +342,8 @@ export class HomeComponent implements OnInit {
         mealType: this.bookingFormGroup.value.mealType,
         //startDate:new Date(adjustedStartDate.getFullYear() + '-'+ (adjustedStartDate.getMonth()+1) + '-'+adjustedStartDate.getDate()) ,
         //endDate: new Date(adjustedEndDate.getFullYear() + '-'+ (adjustedEndDate.getMonth()+1) + '-'+adjustedEndDate.getDate()), // Format to 'YYYY-MM-DD'
-        startDate: this.datePipe.transform(startDate,'yyyy-MM-dd'),
-        endDate:this.datePipe.transform(endDate,'yyyy-MM-dd')
+        startDate: this.datePipe.transform(startDate, 'yyyy-MM-dd'),
+        endDate: this.datePipe.transform(endDate, 'yyyy-MM-dd'),
       };
       // Handle the form submission
       this.bookingService.createBooking(booking).subscribe({
@@ -297,35 +367,156 @@ export class HomeComponent implements OnInit {
   getBookings(): void {
     this.bookingService.getBookingsByUserId().subscribe((data) => {
       this.bookings = data;
-      this.filteredBookings = data; // Initially, show all bookings
+      this.filteredBookingsList = data; // Initially, show all bookings
 
-      console.log(this.bookings);
+       // Sort mealData by date from January to December
+       this.filteredBookingsList.sort((a, b) => {
+        const dateAString = this.datePipe.transform(a.bookingDate, 'yyyy-MM-dd');
+        const dateBString = this.datePipe.transform(b.bookingDate, 'yyyy-MM-dd');
 
+        // Ensure dates are not null before parsing
+        const dateA = dateAString ? new Date(dateAString.replace(/-/g, '/')) : new Date();
+        const dateB = dateBString ? new Date(dateBString.replace(/-/g, '/')) : new Date();
+
+        return dateA.getTime() - dateB.getTime();
+      });
+
+      console.log(this.filteredBookingsList);
+
+      const newDate = new Date();
+
+      this.bookings.forEach((element) => {
+        const checkDate = this.datePipe.transform(
+          element.bookingDate,
+          'yyyy-MM-dd'
+        );
+
+        if (checkDate === this.datePipe.transform(newDate, 'yyyy-MM-dd')) {
+          this.todaysBooking.push(element);
+        }
+      });
     });
   }
 
   filterBookings() {
     if (this.bookingListFormGroup.valid) {
       const { month, year, mealType } = this.bookingListFormGroup.value;
+      console.log('Form Values:', { month, year, mealType });
 
-      console.log(this.bookings)
-  
-      this.filteredBookings = this.bookings.filter((booking) => {
+      this.filteredBookingsList = this.bookings.filter((booking) => {
         const bookingDate = new Date(booking.bookingDate);
-        const bookingMonth = bookingDate.getMonth() + 1; // Adding 1 because getMonth() returns zero-based month
+        const bookingMonth = bookingDate.getMonth();
         const bookingYear = bookingDate.getFullYear();
         const bookingMealType = booking.mealType;
-  
-        // Check if all filters are empty or match the booking
-        const matchesMonth = month ? bookingMonth === month : true;
-        const matchesYear = year ? bookingYear === year : true;
+
+        const matchesMonth = month !== null ? bookingMonth === month : true;
+        const matchesYear = year !== null ? bookingYear === year : true;
         const matchesMealType = mealType ? bookingMealType === mealType : true;
-  
+
         return matchesMonth && matchesYear && matchesMealType;
       });
+
+      console.log('Filtered Bookings:', this.filteredBookingsList);
+    } else {
+      console.log('Form is invalid');
+    }
+  }
+
+  // getCoupon(){
+  //   console.log(this.todaysBooking)
+  //   this.qRCodeService.getQrCodeByBookingId(this.todaysBooking[0].bookingId).subscribe(res =>{
+  //     console.log(res);
+
+  //     const dialogRef = this.dialog.open(QrdialogComponent, {
+  //       data: res,
+  //     });
+
+  //     dialogRef.afterClosed().subscribe(result => {
+  //       console.log('The dialog was closed');
+  //     });
+
+  //   })
+  // }
+
+  showQRButton: boolean = false;
+
+  checkShowQRButton() {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    const currentMinute = currentTime.getMinutes();
+    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+    const lunchStartTime = 11 * 60 + 30; // 11:30 AM
+    const lunchEndTime = 14 * 60; // 2:00 PM
+    const dinnerStartTime = 18 * 60 + 30; // 6:30 PM
+    const dinnerEndTime = 21 * 60; // 9:00 PM
+
+    this.showQRButton =
+      (currentTimeInMinutes >= lunchStartTime &&
+        currentTimeInMinutes <= lunchEndTime) ||
+      (currentTimeInMinutes >= dinnerStartTime &&
+        currentTimeInMinutes <= dinnerEndTime);
+  }
+
+  getCoupon() {
+    console.log(this.todaysBooking);
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    const currentMinute = currentTime.getMinutes();
+    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+    // Define time ranges in minutes
+    const lunchStartTime = 11 * 60 + 30; // 11:30 AM
+    const lunchEndTime = 14 * 60; // 2:00 PM
+    const dinnerStartTime = 18 * 60 + 30; // 6:30 PM
+    const dinnerEndTime = 21 * 60; // 9:00 PM
+
+    let selectedBookingId: string | null = null;
+
+    if (
+      currentTimeInMinutes >= lunchStartTime &&
+      currentTimeInMinutes <= lunchEndTime
+    ) {
+      const lunchBooking = this.todaysBooking.find(
+        (booking: any) => booking.mealType === 'lunch' && !booking.isCancelled
+      );
+      if (lunchBooking) {
+        selectedBookingId = lunchBooking.bookingId;
+      }
+    } else if (
+      currentTimeInMinutes >= dinnerStartTime &&
+      currentTimeInMinutes <= dinnerEndTime
+    ) {
+      const dinnerBooking = this.todaysBooking.find(
+        (booking: any) => booking.mealType === 'dinner' && !booking.isCancelled
+      );
+      if (dinnerBooking) {
+        selectedBookingId = dinnerBooking.bookingId;
+      }
     }
 
-    console.log(this.filteredBookings)
+    if (selectedBookingId) {
+      this.qRCodeService
+        .getQrCodeByBookingId(selectedBookingId)
+        .subscribe((res) => {
+          console.log(res);
+
+          const dialogRef = this.dialog.open(QrdialogComponent, {
+            data: res,
+          });
+
+          dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed');
+          });
+        });
+    } else {
+      console.log('No valid booking found for the current time.');
+    }
+  }
+
+  resetFilter() {
+    this.filteredBookingsList = this.bookings;
+    this.bookingListFormGroup.reset();
   }
 
   dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
@@ -333,28 +524,29 @@ export class HomeComponent implements OnInit {
 
     //console.log(this.mealData);
     if (cellDate && view === 'month') {
-      const cellDateString = cellDate.toISOString().split('T')[0];
+      //const cellDateString = cellDate.toISOString().split('T')[0];
+      const cellDateString = this.datePipe.transform(cellDate, 'yyyy-MM-dd');
 
       //console.log('in if:', this.mealData);
 
       // Check if there are any bookings for the current date
       const hasBooking = this.mealData.some(
-        (booking) => booking.date === cellDateString
+        (booking) => booking.date === cellDateString && !booking.isCancelled
       );
+      //console.log("hasbookings:",hasBooking);
 
       // Determine if the current date is a weekend (Saturday or Sunday)
       const day = cellDate.getDay();
       const isWeekend = day === 0 || day === 6;
-
-      if (hasBooking && isWeekend) {
-        return 'highlight-date disabled-date';
-      } else if (hasBooking) {
-        return 'highlight-date';
-      } else if (isWeekend) {
-        return 'disabled-date';
-      }
+ if (hasBooking) {
+      return 'custom-calendar-cell highlight-date';
+    } else if (isWeekend) {
+      return 'custom-calendar-cell disabled-date';
+    } else {
+      return 'custom-calendar-cell';
     }
-    return '';
+    }
+    return 'custom-calendar-cell';
   };
 
   dateFilter = (date: Date | null): boolean => {
@@ -403,7 +595,7 @@ export class HomeComponent implements OnInit {
   }
 
   fetchBookings() {
-   // console.log('bookings are getting fetched!');
+    // console.log('bookings are getting fetched!');
 
     this.bookingService.getBookingsByUserId().subscribe({
       next: (bookings) => {
@@ -412,8 +604,24 @@ export class HomeComponent implements OnInit {
           userId: booking.userId,
           mealType: booking.mealType,
           //date: new Date(booking.bookingDate).toISOString().split('T')[0],
-          date:this.datePipe.transform(booking.bookingDate,'yyyy-MM-dd')
+          date: this.datePipe.transform(booking.bookingDate, 'yyyy-MM-dd'),
+          isCancelled: booking.isCancelled
         }));
+       // console.log(this.mealData[0].isCancelled);
+
+        // Sort mealData by date from January to December
+        this.mealData.sort((a, b) => {
+          const dateAString = this.datePipe.transform(a.date, 'yyyy-MM-dd');
+          const dateBString = this.datePipe.transform(b.date, 'yyyy-MM-dd');
+  
+          // Ensure dates are not null before parsing
+          const dateA = dateAString ? new Date(dateAString.replace(/-/g, '/')) : new Date();
+          const dateB = dateBString ? new Date(dateBString.replace(/-/g, '/')) : new Date();
+  
+          return dateA.getTime() - dateB.getTime();
+        });
+        //console.log(this.mealData)
+
         this.updateMenu(); // Update the menu once bookings are fetched
         this.setMealType();
       },

@@ -28,29 +28,60 @@
     max-width: 500px;
     max-height: 700px;
     overflow: hidden;
+    position: relative;
   }
   
   .custom-calendar .mat-calendar-content {
     height: 100%;
     display: flex;
     flex-direction: column;
+
+   
+  }
+
+  .custom-calendar-cell{
+    border:1px solid lightslategray;
   }
   
-  .highlight-date {
+  /* .highlight-date {
  border:1px solid green !important;
  color: white !important;
     border-radius: 50% !important;
+  } */
+
+  /* .mat-calendar-body-cell-content {
+    position: relative; /* Ensure the pseudo-element is positioned correctly within the date cell 
+  }
+   */
+/* 
+  .highlight-date::after {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    background-color: green;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+  } */
+
+  .custom-calendar-cell.highlight-date::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: green;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 1px; /* Adjust the position to place the dot at the bottom */
+    right: 0px;  /* Adjust the position to place the dot at the right */
   }
 
   .disabled-date {
      pointer-events: none;
   }
 
-  .disabled-date.highlight-date {
-background-color: transparent !important;
-   
-    pointer-events: none;
-  } 
 
   /* ::ng-deep .highlight-date {
     background-color: green !important;

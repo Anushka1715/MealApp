@@ -19,6 +19,13 @@ export class BookingService {
     return this.http.post<any>(`${environment.apiBaseurl}/Booking`,requestData);
   }
 
+  quickBooking(data:any){
+    const userId = this.auth.getUserIdOfUserFromToken();
+    const requestData = {...data,userId};
+    //console.log("Booking data:",requestData);
+    return this.http.post<any>(`${environment.apiBaseurl}/Booking/quick-booking`,requestData);
+  }
+
   getBookingsByUserId(){
     const userId = this.auth.getUserIdOfUserFromToken();
     //console.log(typeof(userId));
