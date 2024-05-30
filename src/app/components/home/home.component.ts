@@ -22,6 +22,13 @@ interface Meal {
   isCancelled: boolean;
 }
 
+interface Booking {
+  bookingId: string;
+  mealType: string;
+  isCancelled: boolean;
+  qrButtonDisabled?: boolean; // This property is optional since it's added dynamically
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -131,6 +138,8 @@ export class HomeComponent implements OnInit {
   @ViewChild('cancelBookingForm') cancelBookingFormTemplate!: TemplateRef<any>;
   @ViewChild('bookingList') bookingListTemplate!: TemplateRef<any>;
   @ViewChild('quickBookingForm') quickBookingTemplate!:TemplateRef<any>;
+  @ViewChild('selectedDateTemplate') selectedDateTemplate!:TemplateRef<any>;
+
   constructor(
     private dialog: MatDialog,
     private fb: FormBuilder,
@@ -165,7 +174,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.fetchBookings();
+    this.fetchBookings();
 
     this.bookingListFormGroup = this.fb.group({
       month: [null],
@@ -175,7 +184,7 @@ export class HomeComponent implements OnInit {
 
     this.getBookings();
 
-    this.updateMenu();
+    this.updateMenu('init');
 
     const currentYear = new Date().getFullYear();
     this.years = [currentYear, currentYear + 1, currentYear + 2];
@@ -187,7 +196,10 @@ export class HomeComponent implements OnInit {
     }, 60000); // Update every minute
   }
 
-  updateMenu() {
+  updateMenu(from:any) {
+    if(from !=='init'){
+      this.onSelectedDate();
+    }
     const dayOfWeek = this.selectedDate
       ? this.selectedDate.toLocaleString('en-us', { weekday: 'long' })
       : '';
@@ -201,6 +213,8 @@ export class HomeComponent implements OnInit {
     this.lunchMenu = this.weekMenus[dayOfWeek].lunch;
     this.dinnerMenu = this.weekMenus[dayOfWeek].dinner;
     //}
+
+    
   }
 
   setMealType() {
@@ -211,6 +225,13 @@ export class HomeComponent implements OnInit {
     this.mealTaken = todayMeal
       ? `Meal taken: ${todayMeal.mealType}`
       : 'No meal taken today';
+  }
+
+  onSelectedDate(){
+    this.dialog.open(this.selectedDateTemplate  , {
+      width: '400px',
+      backdropClass: 'backdrop-blur',
+    });
   }
 
   openQuickBookingForm() {
@@ -495,7 +516,7 @@ export class HomeComponent implements OnInit {
       currentTimeInMinutes <= lunchEndTime
     ) {
       const lunchBooking = this.todaysBooking.find(
-        (booking: any) => booking.mealType === 'lunch' && !booking.isCancelled
+        (booking: Booking) => booking.mealType === 'lunch' && !booking.isCancelled
       );
       if (lunchBooking) {
         selectedBookingId = lunchBooking.bookingId;
@@ -505,7 +526,7 @@ export class HomeComponent implements OnInit {
       currentTimeInMinutes <= dinnerEndTime
     ) {
       const dinnerBooking = this.todaysBooking.find(
-        (booking: any) => booking.mealType === 'dinner' && !booking.isCancelled
+        (booking: Booking) => booking.mealType === 'dinner' && !booking.isCancelled
       );
       if (dinnerBooking) {
         selectedBookingId = dinnerBooking.bookingId;
@@ -518,16 +539,43 @@ export class HomeComponent implements OnInit {
         .subscribe((res) => {
           console.log(res);
 
-          const dialogRef = this.dialog.open(QrdialogComponent, {
-            data: res,
-          });
+          // Redeem the coupon
+        this.qRCodeService.redeemCoupon(res.couponId).subscribe((redeemSuccess: boolean) => {
+          if (redeemSuccess) {
+            console.log('Coupon redeemed successfully');
+            const dialogRef = this.dialog.open(QrdialogComponent, {
+              data: res,
+            });
 
-          dialogRef.afterClosed().subscribe((result) => {
-            console.log('The dialog was closed');
-          });
+            dialogRef.afterClosed().subscribe(() => {
+              console.log('The dialog was closed');
+              // Disable QR button after 15 minutes
+              setTimeout(() => {
+                // Logic to disable the QR button
+                this.disableQrButton(selectedBookingId!);
+              }, 15 * 60 * 1000);
+            });
+          } else {
+            console.log('Failed to redeem the coupon');
+          }});
+
+          // const dialogRef = this.dialog.open(QrdialogComponent, {
+          //   data: res,
+          // });
+
+          // dialogRef.afterClosed().subscribe((result) => {
+          //   console.log('The dialog was closed');
+          // });
         });
     } else {
       console.log('No valid booking found for the current time.');
+    }
+  }
+
+  disableQrButton(bookingId: string) {
+    const booking = this.todaysBooking.find((b:Booking) => b.bookingId === bookingId);
+    if (booking) {
+      booking.qrButtonDisabled = true;
     }
   }
 
@@ -537,7 +585,6 @@ export class HomeComponent implements OnInit {
   }
 
   dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
-    this.fetchBookings();
 
     //console.log(this.mealData);
     if (cellDate && view === 'month') {
@@ -639,7 +686,7 @@ export class HomeComponent implements OnInit {
         });
         //console.log(this.mealData)
 
-        this.updateMenu(); // Update the menu once bookings are fetched
+        this.updateMenu('init'); // Update the menu once bookings are fetched
         this.setMealType();
       },
       error: (error) => {

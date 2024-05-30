@@ -28,6 +28,7 @@
     max-width: 500px;
     max-height: 700px;
     overflow: hidden;
+    z-index:0;
     position: relative;
   }
   
@@ -73,10 +74,26 @@
     height: 10px;
     background-color: green;
     border-radius: 50%;
+    z-index:2;
     position: absolute;
+    top:17px;
+    left:43px;
     bottom: 1px; /* Adjust the position to place the dot at the bottom */
-    right: 0px;  /* Adjust the position to place the dot at the right */
+    
   }
+  
+  .mat-calendar-body-selected{
+    background-color: #fd8787f6 !important;
+  }
+  
+  .mat-calendar-body-cell-content:hover{
+    background-color: #c05d5d60 !important;
+  }
+  .mat-calendar-body-cell:hover{
+    
+    background-color: white !important;
+  }
+
 
   .disabled-date {
      pointer-events: none;
@@ -183,11 +200,15 @@ button[mat-button]:hover {
   color: #9e9e9e;
 }
 
+.cdk-overlay-pane{
+  width:800px !important;
+}
+
 .form-row {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  /* overflow-x: hidden; Prevent horizontal scrolling */
 }
 
 .form-group {
