@@ -15,6 +15,6 @@ export class QRCodeService {
   }
 
   redeemCoupon(couponId:string):Observable<boolean>{
-    return this.http.post<boolean>(`${environment.apiBaseurl}/Coupon/redeem/${couponId}`,{})
+    return this.http.put<boolean>(`${environment.apiBaseurl}/Coupon/redeem/${couponId}`, '')
   }
 }

@@ -81,7 +81,8 @@ export class AuthServiceService {
   }
 
   getUserIdOfUserFromToken(){
-    if(this.userPayload)
+    this.userPayload = this.decodeToken();
+    
     return this.userPayload.nameid;
   }
 

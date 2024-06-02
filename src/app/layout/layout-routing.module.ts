@@ -10,33 +10,33 @@ import { ContactUsComponent } from '../components/contact-us/contact-us.componen
 import { ChangePasswordComponent } from '../auth/change-password/change-password.component';
 
 const routes: Routes = [{
-  path:'',
-  component:LayoutComponent,
-  children:[{
-    path:'home',
-    component:HomeComponent,
-    canActivate:[authGuard]
-  },{
-    path:'aboutUs',
-    component:AboutUsComponent,
-    canActivate:[authGuard]
-  },{
-    path:'termsAndConditions',
-    component:TermsAndConditionsComponent,
-    canActivate:[authGuard]
-  },{
-    path:'privacyPolicy',
-    component:PrivacyPolicyComponent,
-    canActivate:[authGuard]
-  },{
-    path:'contactUs',
-    component:ContactUsComponent,
-    canActivate:[authGuard]
+  path: '',
+  component: LayoutComponent,
+  children: [{
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [authGuard]
+  }, {
+    path: 'aboutUs',
+    component: AboutUsComponent,
+    canActivate: [authGuard]
+  }, {
+    path: 'termsAndConditions',
+    component: TermsAndConditionsComponent,
+    canActivate: [authGuard]
+  }, {
+    path: 'privacyPolicy',
+    component: PrivacyPolicyComponent,
+    canActivate: [authGuard]
+  }, {
+    path: 'contactUs',
+    component: ContactUsComponent,
+    canActivate: [authGuard]
   },
   {
-    path:'change-password',
-    component:ChangePasswordComponent,
-    canActivate:[authGuard]
+    path: 'change-password',
+    component: ChangePasswordComponent,
+    canActivate: [authGuard]
   }]
 }];
 

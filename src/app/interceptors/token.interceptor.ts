@@ -46,7 +46,8 @@ export class TokenInterceptor implements HttpInterceptor {
             return this.handleUnauthorizedError(request,next);
           }
         }
-        return throwError(()=> new Error("Error occured"))
+        console.log(err);
+        return throwError(()=> new Error(err.message))
 
       })
 

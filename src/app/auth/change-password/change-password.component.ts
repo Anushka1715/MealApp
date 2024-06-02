@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { ChangePasswordService } from '../services/change-password.service';
+import { NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-change-password',
@@ -17,7 +18,8 @@ export class ChangePasswordComponent {
   faEye = faEye;
   faEyeSlash = faEyeSlash;
 
-  constructor(private fb: FormBuilder,private changePasswordService:ChangePasswordService) {
+  constructor(private fb: FormBuilder,private changePasswordService:ChangePasswordService,
+    private toast:NgToastService) {
     this.changePasswordForm = this.fb.group({
       oldPassword: ['', [Validators.required]],
       newPassword: ['', [Validators.required]],
@@ -43,8 +45,14 @@ export class ChangePasswordComponent {
         this.changePasswordService.changePassword(this.changePasswordForm.value)
             .subscribe({
                 next: (res) => {
+
+                    if(res.success){
+
                 this.changePasswordForm.reset();
-                    console.log('Success:', res);
+              }else{
+                this.toast.error(res.message);
+              }
+
                 },
                 error: (err) => {
                     console.log('Error:', err);

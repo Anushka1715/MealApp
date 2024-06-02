@@ -14,9 +14,17 @@
          [dateClass]="dateClass" [dateFilter]="dateFilter"
          [minDate]="todayDate"
         ></mat-calendar>
+
+        <mat-calendar *ngIf="!bookings.length"
+         [(selected)]="selectedDate" (selectedChange)="updateMenu('html')"
+         [dateClass]="dateClass" [dateFilter]="dateFilter"
+         [minDate]="todayDate"
+        ></mat-calendar>
+
+
         <div class="d-flex justify-content-between align-items-center mt-3">
             <button class="btn btn-danger" (click)="openBookingForm()">Add Booking</button>
-            <button class="btn btn-primary" *ngIf="showQRButton"   (click)="getCoupon()">Show QR</button>
+            <button class="btn btn-primary" *ngIf="showQRButton" (click)="getCoupon()">Show QR</button>
 
         </div>
     </div>
@@ -193,7 +201,7 @@
         <table mat-table [dataSource]="filteredBookingsList" class="mat-elevation-z8">
           <ng-container matColumnDef="date">
             <th mat-header-cell *matHeaderCellDef>Date</th>
-            <td mat-cell *matCellDef="let booking">{{ booking.bookingDate | date:'yyyy-MM-dd' }}</td>
+            <td mat-cell *matCellDef="let booking">{{ booking.date | date:'yyyy-MM-dd' }}</td>
           </ng-container>
           <ng-container matColumnDef="mealType">
             <th mat-header-cell *matHeaderCellDef>Meal Type</th>
@@ -238,7 +246,7 @@
 
 <ng-template #selectedDateTemplate>
 <div class="selectedDate p-4 mw-50">
-  <h2 mat-dialog-title>{{ todayDate | date: 'fullDate' }}</h2>
+  <h2 mat-dialog-title>{{ selectedDate | date: 'fullDate' }}</h2>
   <button class="btn btn-danger mx-3" (click)="openQuickBookingForm()">Quick Booking</button>
   <button class="btn btn-danger" (click)="openCancelBookingForm()">Cancel Booking</button>
 

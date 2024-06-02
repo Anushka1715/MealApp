@@ -28,7 +28,7 @@ export class BookingService {
 
   getBookingsByUserId(){
     const userId = this.auth.getUserIdOfUserFromToken();
-    //console.log(typeof(userId));
+    console.log(typeof(userId));
     return this.http.get<any[]>(`${environment.apiBaseurl}/Booking/user/${userId}`);
   }
 
@@ -41,5 +41,11 @@ export class BookingService {
     };
 
     return this.http.delete(`${environment.apiBaseurl}/Booking`,{params});
+  }
+
+  addFeedback(data:any){
+    const userId = this.auth.getUserIdOfUserFromToken();
+    const requestData = {...data,userId};
+    return this.http.post<any>(`${environment.apiBaseurl}/FeedbackControllercs`, data);
   }
 }
